@@ -5,9 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class ListaLivros extends JFrame {
     private JPanel listaLivrosPanel;
@@ -17,29 +15,27 @@ public class ListaLivros extends JFrame {
     private JButton removerButton;
     private JList<Livro> itemList;
     private DefaultListModel<Livro> listModel;
-    private List<Livro> livros;
+    private BibliotecaControlo bibliotecaControlo;
     private GestaoLivros gestaoLivros;
 
-    public ListaLivros( ) {
+    public ListaLivros(BibliotecaControlo bibliotecaControlo) {
+        this.bibliotecaControlo = bibliotecaControlo;
         listModel = new DefaultListModel<>();
         itemList = new JList<>(listModel);
         itemList.setCellRenderer(new LivroListRenderer());
-        livros = new ArrayList<>();
 
         listaLivrosPanel = new JPanel();
         listaLivrosPanel.setLayout(new BorderLayout());
-
-        // Set background color for the panel
         listaLivrosPanel.setBackground(new Color(0x2F3436));
 
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(0x2F3436)); // Set background color
+        topPanel.setBackground(new Color(0x2F3436));
         JLabel tituloLabel = new JLabel("Readify", JLabel.CENTER);
-        tituloLabel.setForeground(new Color(0x5F6368)); // Set text color
+        tituloLabel.setForeground(new Color(0x5F6368));
         topPanel.add(tituloLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new BorderLayout());
-        searchPanel.setBackground(new Color(0x2F3436)); // Set background color
+        searchPanel.setBackground(new Color(0x2F3436));
         searchBar = new JTextField();
         searchBar.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -60,17 +56,17 @@ public class ListaLivros extends JFrame {
         searchPanel.add(searchBar, BorderLayout.CENTER);
 
         gestaoDeAquisicoesButton = new JButton("Voltar");
-        gestaoDeAquisicoesButton.setBackground(new Color(0x262626)); // Set button color
-        gestaoDeAquisicoesButton.setForeground(new Color(0x5F6368)); // Set text color
+        gestaoDeAquisicoesButton.setBackground(new Color(0x262626));
+        gestaoDeAquisicoesButton.setForeground(new Color(0x5F6368));
         gestaoDeAquisicoesButton.addActionListener(this::voltaractionPerformed);
         JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        backButtonPanel.setBackground(new Color(0x2F3436)); // Set background color
+        backButtonPanel.setBackground(new Color(0x2F3436));
         backButtonPanel.add(gestaoDeAquisicoesButton);
         searchPanel.add(backButtonPanel, BorderLayout.WEST);
         topPanel.add(searchPanel, BorderLayout.CENTER);
 
         JPanel descriptionPanel = new JPanel(new GridLayout(1, 4));
-        descriptionPanel.setBackground(new Color(0x2F3436)); // Set background color
+        descriptionPanel.setBackground(new Color(0x2F3436));
         descriptionPanel.add(createStyledLabel("ID"));
         descriptionPanel.add(createStyledLabel("Título"));
         descriptionPanel.add(createStyledLabel("Quantidade"));
@@ -84,15 +80,15 @@ public class ListaLivros extends JFrame {
         listaLivrosPanel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setBackground(new Color(0x2F3436)); // Set background color
+        buttonPanel.setBackground(new Color(0x2F3436));
         registarLivroButton = new JButton("Registar");
-        registarLivroButton.setBackground(new Color(0x262626)); // Set button color
-        registarLivroButton.setForeground(new Color(0x5F6368)); // Set text color
-        removerButton = new JButton("Remover");
-        removerButton.setBackground(new Color(0x262626)); // Set button color
-        removerButton.setForeground(new Color(0x5F6368)); // Set text color
-        removerButton.addActionListener(this::removeractionPerformed);
+        registarLivroButton.setBackground(new Color(0x262626));
+        registarLivroButton.setForeground(new Color(0x5F6368));
         registarLivroButton.addActionListener(this::registaractionPerformed);
+        removerButton = new JButton("Remover");
+        removerButton.setBackground(new Color(0x262626));
+        removerButton.setForeground(new Color(0x5F6368));
+        removerButton.addActionListener(this::removeractionPerformed);
         buttonPanel.add(registarLivroButton);
         buttonPanel.add(removerButton);
         listaLivrosPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -104,11 +100,12 @@ public class ListaLivros extends JFrame {
 
         // Adiciona o MouseListener ao itemList
         adicionarMouseListener();
+        updateListaLivros();
     }
 
     private JLabel createStyledLabel(String text) {
         JLabel label = new JLabel(text, JLabel.CENTER);
-        label.setForeground(new Color(0x5F6368)); // Set text color
+        label.setForeground(new Color(0x5F6368));
         return label;
     }
 
@@ -117,7 +114,6 @@ public class ListaLivros extends JFrame {
     }
 
     private void adicionarMouseListener() {
-        // Adicionar MouseListener para detectar cliques duplos na lista de livros
         itemList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -139,7 +135,7 @@ public class ListaLivros extends JFrame {
             int opcao = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja remover o livro selecionado?",
                     "Confirmação de Remoção", JOptionPane.YES_NO_OPTION);
             if (opcao == JOptionPane.YES_OPTION) {
-                livros.remove(livro);
+                bibliotecaControlo.removerLivro(livro);
                 listModel.removeElement(livro);
             }
         } else {
@@ -158,27 +154,27 @@ public class ListaLivros extends JFrame {
     }
 
     public void adicionarLivro(Livro livro) {
-        livros.add(livro);
+        bibliotecaControlo.adicionarLivro(livro);
         listModel.addElement(livro);
     }
 
     public boolean removerLivroPorIdCompra(int idCompra) {
-        Iterator<Livro> iterator = livros.iterator();
+        Iterator<Livro> iterator = bibliotecaControlo.getLivros().iterator();
         while (iterator.hasNext()) {
             Livro livro = iterator.next();
             if (livro.getIdCompra() == idCompra) {
                 iterator.remove();
                 listModel.removeElement(livro);
-                return true; // Livro encontrado e removido
+                return true;
             }
         }
-        return false; // Livro não encontrado com o ID de compra especificado
+        return false;
     }
 
     private void updateFilteredList() {
         String searchText = searchBar.getText().toLowerCase();
         listModel.clear();
-        for (Livro livro : livros) {
+        for (Livro livro : bibliotecaControlo.getLivros()) {
             if (livro.getTitulo().toLowerCase().contains(searchText) ||
                     livro.getAutor().toLowerCase().contains(searchText) ||
                     String.valueOf(livro.getIdCompra()).contains(searchText) ||
@@ -188,11 +184,18 @@ public class ListaLivros extends JFrame {
         }
     }
 
+    private void updateListaLivros() {
+        listModel.clear();
+        for (Livro livro : bibliotecaControlo.getLivros()) {
+            listModel.addElement(livro);
+        }
+    }
+
     private class LivroListRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             JPanel panel = new JPanel(new GridLayout(1, 4));
-            panel.setBackground(new Color(0x2F3436)); // Set background color
+            panel.setBackground(new Color(0x2F3436));
             if (value instanceof Livro) {
                 Livro livro = (Livro) value;
                 JLabel idLabel = createStyledLabel(String.valueOf(livro.getIdCompra()));
@@ -215,5 +218,4 @@ public class ListaLivros extends JFrame {
             return panel;
         }
     }
-
 }

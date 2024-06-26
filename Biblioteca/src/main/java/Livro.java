@@ -1,22 +1,25 @@
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class Livro {
-    private static int proximoId = 1; // Variável estática para gerar o próximo ID
-    private int idCompra; // ID de compra do livro
+    private static int proximoId = 1;
+    private int idCompra;
     private String titulo;
     private String autor;
     private String subgenero;
-    private int numeroEdicao; // Alterado para int
-    private int isbn; // Alterado para String (pois ISBN pode ter traços e ser alfanumérico)
+    private int numeroEdicao;
+    private int isbn;
     private String fornecedor;
-    private int quantidade; // Alterado para int
+    private int quantidade;
     private String genero;
     private String editora;
-    private int anoPublicacao; // Alterado para int
+    private int anoPublicacao;
     private String codigo;
     private String estantePrateleira;
 
-    // Construtor
+    // Lista de reservas associadas ao livro
+    private List<Reserva> reservas;
+
     public Livro(String titulo, String autor, String subgenero, int numeroEdicao,
                  int isbn, String fornecedor, int quantidade, String genero,
                  String editora, int anoPublicacao, String codigo, String estantePrateleira) {
@@ -33,6 +36,7 @@ public class Livro {
         this.anoPublicacao = anoPublicacao;
         this.codigo = codigo;
         this.estantePrateleira = estantePrateleira;
+        this.reservas = new ArrayList<>();
     }
 
     public int getIdCompra() {
@@ -135,4 +139,16 @@ public class Livro {
         this.estantePrateleira = estantePrateleira;
     }
 
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void adicionarReserva(Reserva reserva) {
+        reservas.add(reserva);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d - %s - %s", idCompra, titulo, autor);
+    }
 }

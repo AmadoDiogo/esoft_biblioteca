@@ -4,25 +4,28 @@ import java.awt.event.ActionEvent;
 public class GestaoReservas extends JFrame {
     private JPanel gestaoReservas;
     private JButton adicionarReservaButton;
-    private JButton gestorReservasButton;
     private JButton removerReservaButton;
     private JButton listaReservasButton;
+    private JButton gestorReservasButton;
     private Biblioteca biblioteca;
     private ListaLivros listaLivros;
     private ListaReservas listaReservas;
+    private BibliotecaControlo bibliotecaControlo;
 
-    public GestaoReservas(Biblioteca biblioteca, ListaLivros listaLivros) {
+    public GestaoReservas(Biblioteca biblioteca, ListaLivros listaLivros, BibliotecaControlo bibliotecaControlo) {
         this.biblioteca = biblioteca;
         this.listaLivros = listaLivros;
+        this.bibliotecaControlo = bibliotecaControlo;
+        this.listaReservas = new ListaReservas(bibliotecaControlo);
 
         setContentPane(gestaoReservas);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
 
-        gestorReservasButton.addActionListener(this::voltaractionPerformed);
-        adicionarReservaButton.addActionListener(this::adicioonaractionPerformed);
+        adicionarReservaButton.addActionListener(this::adicionaractionPerformed);
         removerReservaButton.addActionListener(this::removeractionPerformed);
         listaReservasButton.addActionListener(this::listaactionPerformed);
+        gestorReservasButton.addActionListener(this::voltaractionPerformed);
     }
 
     public void voltaractionPerformed(ActionEvent e) {
@@ -30,16 +33,20 @@ public class GestaoReservas extends JFrame {
         biblioteca.setVisible(true);
     }
 
-    public void adicioonaractionPerformed(ActionEvent e) {
-        setVisible(false);
-        new AdicionarReservas(listaLivros).setVisible(true);
+    public void adicionaractionPerformed(ActionEvent e) {
+        AdicionarReservas adicionarReservas = new AdicionarReservas(bibliotecaControlo, listaLivros);
+        adicionarReservas.setVisible(true);
     }
 
     public void removeractionPerformed(ActionEvent e) {
-
+        new RemoverReservaID( bibliotecaControlo).setVisible(true);
     }
 
     public void listaactionPerformed(ActionEvent e) {
-        new ListaReservas().setVisible(true);
+        setVisible(false);
+        listaReservas.updateReservaList(); // Atualiza a lista de reservas antes de exibir
+        listaReservas.setGestaoReservas(this); // Passando a referência de GestaoReservas para ListaReservas
+        listaReservas.setVisible(true);
     }
+
 }

@@ -40,7 +40,7 @@ public class GestaoLivros extends JFrame {
     }
 
     public void listaactionPerformed(ActionEvent e) {
-        setVisible(false);
+        setVisible(true);
         listaLivros.setGestaoLivros(this);
         listaLivros.setVisible(true);
     }

@@ -1,19 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class ListaReservas extends JFrame {
-    private List<Livro> livro;
-    private JList<Reserva> reservaJList;
+    private List<Livro> livros;
+    private JList<Livro> reservaJList;
     private JPanel livrosReservasPanel;
     private JTextField searchField;
     private JButton reservarButton;
     private JButton voltarButton;
-    private DefaultListModel<Reserva> listModel;
+    private DefaultListModel<Livro> listModel;
+    private GestaoReservas gestaoReservas;
+    private BibliotecaControlo bibliotecaControlo;
 
-    public ListaReservas() {
-        livro = new ArrayList<>();
+    public ListaReservas(BibliotecaControlo bibliotecaControlo) {
+        this.bibliotecaControlo = bibliotecaControlo;
+        livros = bibliotecaControlo.getLivrosReservados();
         listModel = new DefaultListModel<>();
         reservaJList = new JList<>(listModel);
 
@@ -24,10 +27,18 @@ public class ListaReservas extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        livro.add(new Livro("MM","nn","bb",1,11,"aaa",5,"anim","mario",1, "1", "a1"));
+        voltarButton.addActionListener(this::voltaractionPerformed);
+
         updateReservaList();
     }
 
+    public void setGestaoReservas(GestaoReservas gestaoReservas){
+        this.gestaoReservas=gestaoReservas;
+    }
+    public void voltaractionPerformed(ActionEvent e){
+        setVisible(false);
+        gestaoReservas.setVisible(true);
+    }
 
     public void updateReservaList() {
         listModel.clear();
@@ -35,7 +46,6 @@ public class ListaReservas extends JFrame {
             listModel.addElement(livro);
         }
     }
-
 
     private static class ReservaListRenderer extends DefaultListCellRenderer {
         @Override
@@ -67,6 +77,7 @@ public class ListaReservas extends JFrame {
 
             return panel;
         }
+
         private JLabel createStyledLabel(String text) {
             JLabel label = new JLabel(text, JLabel.CENTER);
             label.setForeground(new Color(0x5F6368)); // Set text color
